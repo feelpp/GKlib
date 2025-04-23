@@ -15,6 +15,20 @@ include(GNUInstallDirs)
 # -----------------------------------------------------------------------------
 include(GKlibSystem.cmake)  # sets GKlib_sources and GKlib_includes
 
+# ------------------------------------------------------------------------
+# On Windows/MinGW drop -Werror and -pedantic so that %z, ssize_t, etc. compile
+# ------------------------------------------------------------------------
+if (WIN32)
+  message(STATUS "WIN32 detected: disabling -Werror and -pedantic flags")
+  foreach(flag_var
+          CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+          CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
+    string(REPLACE "-Werror"    "" ${flag_var} "${${flag_var}}")
+    string(REPLACE "-pedantic"  "" ${flag_var} "${${flag_var}}")
+    string(REPLACE "-Werror=format" "" ${flag_var} "${${flag_var}}")
+  endforeach()
+endif()
+
 # -----------------------------------------------------------------------------
 # Define the GKlib library
 # -----------------------------------------------------------------------------
