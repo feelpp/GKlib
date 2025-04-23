@@ -41,7 +41,7 @@ add_library(GKlib
 )
 # On Windows, <regex.h> isn’t available—force use of our internal gkregex
 if(WIN32)
-  target_compile_definitions(GKlib PRIVATE USE_GKREGEX)
+  target_compile_definitions(GKlib PUBLIC USE_GKREGEX)
   # On Windows, disable treating these warnings as errors
   target_compile_options(GKlib PRIVATE
     -Wno-error=maybe-uninitialized
