@@ -13,10 +13,7 @@ add_executable(splatt2svd splatt2svd.c)
 
 foreach(prog strings gksort fis gkrw gkgraph csrcnv grKx m2mnbrs cmpnbrs splatt2svd )
   target_link_libraries(${prog} GKlib)
-  if (WIN32 AND BUILD_SHARED_LIBS)
-    set(_GKLIB_BIN_DIR "$<TARGET_FILE_DIR:GKlib>")
-    set_tests_properties(${prog} PROPERTIES ENVIRONMENT "PATH=${_GKLIB_BIN_DIR};$ENV{PATH}" )
-  endif()
+  
 endforeach(prog)
 
 foreach(prog strings gksort fis gkrw gkgraph csrcnv grKx)
