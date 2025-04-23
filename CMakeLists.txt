@@ -87,12 +87,13 @@ install(TARGETS GKlib
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-
+file(GLOB GKlib_includes
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+)
 # Install all public headers (*.h) into the include/GKlib directory
-install(
-  DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+install(FILES ${GKlib_includes}
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GKlib
-  FILES_MATCHING PATTERN "*.h"
 )
 
 # Export targets for find_package
