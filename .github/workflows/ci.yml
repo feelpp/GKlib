@@ -1,0 +1,29 @@
+name: ci
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.os }} / ${{ matrix.build-type }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        build-type: [ debug, release, release-shared ]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure with CMake
+        run: cmake --preset ${{ matrix.build-type }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.build-type }} --parallel
+
+      - name: Test
+        run: ctest --preset ${{ matrix.build-type }} --output-on-failure

@@ -15,5 +15,10 @@ foreach(prog strings gksort fis gkrw gkgraph csrcnv grKx m2mnbrs cmpnbrs splatt2
   target_link_libraries(${prog} GKlib)
 endforeach(prog)
 
+foreach(prog strings gksort fis gkrw gkgraph csrcnv grKx gkuniq)
+  target_link_libraries(${prog} GKlib)
+  add_test(NAME ${prog} COMMAND ${prog})
+endforeach(prog)
+
 # Install a subset of them
 install(TARGETS csrcnv RUNTIME DESTINATION bin)

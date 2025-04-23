@@ -1,0 +1,8 @@
+@PACKAGE_INIT@
+
+# If GKlib has dependencies, you can use CMakeFindDependencyMacro:
+# include(CMakeFindDependencyMacro)
+# find_dependency(SomeOtherLib)
+
+# Import the targets we install below
+include("${CMAKE_CURRENT_LIST_DIR}/GKlibTargets.cmake")

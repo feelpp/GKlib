@@ -1,0 +1,80 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 15,
+      "patch": 0
+    },
+    "configurePresets": [
+      {
+        "name" : "default",
+        "hidden": true,
+        "displayName": "Default",
+        "generator": "Ninja",
+        "binaryDir": "${sourceDir}/build/${presetName}",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "BUILD_SHARED_LIBS": "OFF",
+          "ENABLE_TESTING": "ON"
+        }
+      },
+      {
+        "name": "debug",
+        "displayName": "Debug Build",
+        "description": "Generate a Debug build with assertions and tests",
+        "generator": "Ninja",
+        "binaryDir": "${sourceDir}/build/debug",
+        "inherits": "default",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug"
+        }
+      },
+      {
+        "name": "release",
+        "displayName": "Release Build",
+        "description": "Generate a Release build (static library)",
+        "inherits": "default",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release"
+        }
+      },
+      {
+        "name": "release-shared",
+        "displayName": "Release (Shared)",
+        "description": "Release build with shared libraries",
+        "inherits": "release",
+        "cacheVariables": {
+          "BUILD_SHARED_LIBS": "ON"
+        }
+      }
+    ],
+    "buildPresets": [
+      { "name": "debug", "configurePreset": "debug" },
+      { "name": "release", "configurePreset": "release" },
+      { "name": "release-shared", "configurePreset": "release-shared" }
+    ],
+    "testPresets": [
+      { "name": "default", 
+        "configurePreset": "default",
+        "output": {
+            "outputOnFailure": true
+         }, 
+         "execution": {
+            "jobs": 2,
+            "noTestsAction": "error",
+            "repeat": {
+               "count": 3,
+               "mode": "until-pass"
+            },
+            "stopOnFailure": false,
+            "timeout": 700
+         }
+        },
+      { "name": "debug", "configurePreset": "debug", "inherits": "default" },
+      { "name": "release", "configurePreset": "release", "inherits": "default" },
+      { "name": "release-shared", "configurePreset": "release-shared", "inherits": "default" }
+
+    ]
+  }
+  
+  
