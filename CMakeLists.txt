@@ -25,12 +25,16 @@ file(GLOB GKlib_sources
 add_library(GKlib
   ${GKlib_sources}
 )
-
+# On Windows, <regex.h> isn’t available—force use of our internal gkregex
+if(WIN32)
+  target_compile_definitions(GKlib PRIVATE USE_GKREGEX)
+endif()
 target_include_directories(GKlib
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/GKlib>
 )
+
 
 # Windows-specific sources
 if(MSVC)
