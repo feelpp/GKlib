@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(GKlib LANGUAGES C VERSION 5.0.0)
+project(GKlib LANGUAGES C VERSION 5.2.0)
 
 # -----------------------------------------------------------------------------
 # Options
