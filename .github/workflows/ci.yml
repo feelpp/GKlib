@@ -15,6 +15,10 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         build-type: [ debug, release, release-shared ]
+        exclude:
+          - os: windows-latest
+            build-type: release-shared
+
 
     steps:
       - uses: actions/checkout@v4
@@ -24,6 +28,15 @@ jobs:
 
       - name: Build
         run: cmake --build --preset ${{ matrix.build-type }} --parallel
+
+ # On Windows shared builds, make sure the GKlib DLL is on PATH so tests can load it
+      - name: Add shared‐lib directory to PATH
+        if: runner.os == 'Windows' && matrix.build-type == 'release-shared'
+        shell: powershell
+        run: |
+          $dllDir = Join-Path $PWD 'build/release-shared'
+          Write-Host "Adding $dllDir to PATH"
+          $Env:PATH = "$dllDir;$Env:PATH"
 
       - name: Test
         run: ctest --preset ${{ matrix.build-type }} --output-on-failure

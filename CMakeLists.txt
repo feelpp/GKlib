@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(GKlib LANGUAGES C VERSION 5.0.0)
+project(GKlib LANGUAGES C VERSION 5.2.0)
 
 # -----------------------------------------------------------------------------
 # Options
@@ -15,6 +15,20 @@ include(GNUInstallDirs)
 # -----------------------------------------------------------------------------
 include(GKlibSystem.cmake)  # sets GKlib_sources and GKlib_includes
 
+# ------------------------------------------------------------------------
+# On Windows/MinGW drop -Werror and -pedantic so that %z, ssize_t, etc. compile
+# ------------------------------------------------------------------------
+if (WIN32)
+  message(STATUS "WIN32 detected: disabling -Werror and -pedantic flags")
+  foreach(flag_var
+          CMAKE_C_FLAGS CMAKE_C_FLAGS_DEBUG CMAKE_C_FLAGS_RELEASE
+          CMAKE_C_FLAGS_MINSIZEREL CMAKE_C_FLAGS_RELWITHDEBINFO)
+    string(REPLACE "-Werror"    "" ${flag_var} "${${flag_var}}")
+    string(REPLACE "-pedantic"  "" ${flag_var} "${${flag_var}}")
+    string(REPLACE "-Werror=format" "" ${flag_var} "${${flag_var}}")
+  endforeach()
+endif()
+
 # -----------------------------------------------------------------------------
 # Define the GKlib library
 # -----------------------------------------------------------------------------
@@ -25,12 +39,22 @@ file(GLOB GKlib_sources
 add_library(GKlib
   ${GKlib_sources}
 )
-
+# On Windows, <regex.h> isn’t available—force use of our internal gkregex
+if(WIN32)
+  target_compile_definitions(GKlib PUBLIC USE_GKREGEX)
+  # On Windows, disable treating these warnings as errors
+  target_compile_options(GKlib PRIVATE
+    -Wno-error=maybe-uninitialized
+    -Wno-error=pointer-to-int-cast
+    -Wno-error=int-to-pointer-cast
+  )
+endif()
 target_include_directories(GKlib
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/GKlib>
 )
+
 
 # Windows-specific sources
 if(MSVC)
@@ -63,8 +87,11 @@ install(TARGETS GKlib
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-
-# Install public headers
+file(GLOB GKlib_includes
+  RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+  "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+)
+# Install all public headers (*.h) into the include/GKlib directory
 install(FILES ${GKlib_includes}
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/GKlib
 )

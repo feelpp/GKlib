@@ -9,16 +9,25 @@ add_executable(grKx grKx.c)
 add_executable(m2mnbrs m2mnbrs.c)
 add_executable(cmpnbrs cmpnbrs.c)
 add_executable(splatt2svd splatt2svd.c)
-add_executable(gkuniq gkuniq.c)
 
-foreach(prog strings gksort fis gkrw gkgraph csrcnv grKx m2mnbrs cmpnbrs splatt2svd gkuniq)
+
+foreach(prog strings gksort fis gkrw gkgraph csrcnv grKx m2mnbrs cmpnbrs splatt2svd )
   target_link_libraries(${prog} GKlib)
+  
 endforeach(prog)
 
-foreach(prog strings gksort fis gkrw gkgraph csrcnv grKx gkuniq)
+foreach(prog strings gksort fis gkrw gkgraph csrcnv grKx)
   target_link_libraries(${prog} GKlib)
   add_test(NAME ${prog} COMMAND ${prog})
 endforeach(prog)
 
 # Install a subset of them
 install(TARGETS csrcnv RUNTIME DESTINATION bin)
+
+# gkuniq uses asm for linux, do not build or test it for windows or mac
+if (NOT WIN32 AND NOT APPLE)
+  add_executable(gkuniq gkuniq.c)
+  target_link_libraries(gkuniq GKlib)
+  add_test(NAME gkuniq COMMAND gkuniq)
+  set_tests_properties(gkuniq PROPERTIES TIMEOUT 30)
+endif()
